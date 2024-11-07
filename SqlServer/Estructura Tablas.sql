@@ -1,4 +1,4 @@
-
+USE TinderDB
 
 -- Tabla Usuarios
 CREATE TABLE Usuarios (
@@ -8,8 +8,35 @@ CREATE TABLE Usuarios (
     genero NVARCHAR(20),
     ubicacion NVARCHAR(100),
     biografia NVARCHAR(MAX),
-    preferencias NVARCHAR(MAX)  -- Esto puede incluir un JSON con rango de edad e intereses, o desglosarse en otra tabla
+ 
 );
+
+select * from Usuarios;
+
+
+
+
+
+
+select preferencias from Usuarios;
+
+CREATE TABLE Intereses(
+	id int Primary key identity,
+	interes NVARCHAR(50));
+
+	-- Inserciones en la tabla Intereses
+
+select * from Intereses
+
+
+CREATE TABLE Intereses_x_usuario(
+	id_usuario int ,
+	id_interes int,
+	primary key(id_usuario,id_interes),
+	CONSTRAINT FK_Interes_user FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
+	CONSTRAINT FK_Interes_Interes FOREIGN KEY (id_interes) REFERENCES Intereses(id));
+
+
 
 --INSERTS--
 INSERT INTO Usuarios (nombre, edad, genero, ubicacion, biografia, preferencias) VALUES
@@ -19,17 +46,9 @@ INSERT INTO Usuarios (nombre, edad, genero, ubicacion, biografia, preferencias) 
 ('Ana', 21, 'Femenino', 'Córdoba', 'Disfruto de los libros y las caminatas.', '{"edad_min": 18, "edad_max": 25, "intereses": ["lectura", "naturaleza"]}'),
 ('Carlos', 23, 'Masculino', 'Rosario', 'Me gusta la comida y las nuevas experiencias.', '{"edad_min": 20, "edad_max": 30, "intereses": ["gastronomía", "cultura"]}');
 
-INSERT INTO Usuarios (nombre, edad, genero, ubicacion, biografia, preferencias) VALUES 
-('Alice', 25, 'F', 'New York', 'Adoro la música y los libros. Aventurera por naturaleza.', '{"rango_edad_min": 24, "rango_edad_max": 30, "intereses": ["música", "viajar", "libros"]}'),
-('Bob', 27, 'M', 'Los Angeles', 'Ingeniero de software, apasionado por la tecnología y el senderismo.', '{"rango_edad_min": 24, "rango_edad_max": 28, "intereses": ["tecnología", "senderismo", "cine"]}'),
-('Charlie', 30, 'M', 'Chicago', 'Fotógrafo profesional. Siempre en busca de la foto perfecta.', '{"rango_edad_min": 25, "rango_edad_max": 35, "intereses": ["fotografía", "cine", "arte"]}'),
-('Diana', 24, 'F', 'San Francisco', 'Amo la naturaleza, los animales y el yoga.', '{"rango_edad_min": 22, "rango_edad_max": 30, "intereses": ["naturaleza", "animales", "yoga"]}'),
-('Eve', 28, 'F', 'Miami', 'Chef y amante de los deportes acuáticos. Me encanta cocinar para amigos.', '{"rango_edad_min": 26, "rango_edad_max": 34, "intereses": ["cocina", "deportes acuáticos", "viajes"]}'),
-('Frank', 31, 'M', 'Austin', 'Músico y entusiasta de los automóviles clásicos.', '{"rango_edad_min": 28, "rango_edad_max": 35, "intereses": ["música", "automóviles", "viajar"]}'),
-('Grace', 26, 'F', 'Boston', 'Artista digital y diseñadora. Exploradora urbana y fan de los museos.', '{"rango_edad_min": 25, "rango_edad_max": 32, "intereses": ["arte", "diseño", "museos"]}'),
-('Henry', 29, 'M', 'Seattle', 'Amo la literatura y el té. Escribiendo mi primera novela.', '{"rango_edad_min": 27, "rango_edad_max": 33, "intereses": ["literatura", "escritura", "café"]}'),
-('Isabel', 32, 'F', 'San Diego', 'Entusiasta de la tecnología y la ciencia ficción. Aventurera a tiempo completo.', '{"rango_edad_min": 30, "rango_edad_max": 36, "intereses": ["tecnología", "ciencia ficción", "aventuras"]}'),
-('Jack', 30, 'M', 'Denver', 'Emprendedor y viajero. Buscando a alguien para nuevas aventuras.', '{"rango_edad_min": 28, "rango_edad_max": 35, "intereses": ["emprendimiento", "viajes", "deportes extremos"]}');
+
+INSERT INTO Usuarios (nombre, edad, genero, ubicacion, biografia) VALUES
+('Agustin', 20, 'Masculino', 'Buenos Aires', 'Amo viajar y conocer gente nueva.')
 
 
 UPDATE Usuarios
@@ -173,22 +192,6 @@ CREATE TABLE Mensajes (
 
 --INSERTS-- 
 
-INSERT INTO Mensajes (id_match, id_usuario_emisor, texto, fecha_envio) VALUES
-(1, 1, 'Hola Lucia, ¿cómo estás?', '2024-10-01 10:20:00'),  -- Mensaje de Agustin a Lucia
-(1, 2, '¡Hola Agustin! Muy bien, ¿y tú?', '2024-10-01 10:25:00'),  -- Mensaje de Lucia a Agustin
-(2, 3, 'Hola Ana, encantado de conocerte.', '2024-10-03 13:20:00'),  -- Mensaje de Pedro a Ana
-(2, 4, 'Igualmente, Pedro. ¿Qué te gusta hacer?', '2024-10-03 13:25:00');  -- Mensaje de Ana a Pedro
-
-
--- Inserción de mensajes para el match entre usuarios 1 y 2
-INSERT INTO Mensajes (id_match, id_usuario_emisor, texto, fecha_envio)
-VALUES 
-(1, 1, '¡Hola! ¿Cómo estás?', '2024-10-01 10:30:00'),
-(1, 2, '¡Hola! Estoy bien, ¿y tú?', '2024-10-01 10:32:00'),
-(1, 1, 'Muy bien, gracias. ¿Te gustaría salir algún día?', '2024-10-01 10:34:00'),
-(1, 2, 'Sí, sería genial. ¿Este fin de semana?', '2024-10-01 10:35:00'),
-(1, 1, '¡Perfecto! Nos vemos entonces.', '2024-10-01 10:36:00');
-
 
 
 
@@ -250,8 +253,6 @@ INSERT INTO Event_Attendees (id_evento, id_usuario) VALUES
 (3, 4);  -- Ana asiste a la Excursión
 
 
-select * from Usuarios;
-
 
 SELECT 
     COUNT(*) / COUNT(DISTINCT CAST(fecha_match AS DATE)) AS promedio_matches_por_dia
@@ -284,6 +285,8 @@ WHERE DATEPART(weekday, fecha_match) IN (1, 7)
       OR CONVERT(DATE, fecha_match) IN ('2024-12-25', '2024-01-01'); -- Lista de días festivos
 
 
+--Coincidencias durante el fin de semana o días festivos:
+
 SELECT 
     CONVERT(DATE, Matches.fecha_match) AS fecha, 
     COUNT(Matches.id_match) AS cantidad_matches 
@@ -293,3 +296,30 @@ WHERE DATEPART(weekday, CONVERT(DATE, fecha_match)) IN (1, 7)
 GROUP BY CONVERT(DATE, Matches.fecha_match)
 ORDER BY fecha;  -- Ordenar por fecha si es necesario
 
+--Duración promedio de las conversaciones antes de una cita:
+
+
+-- Subconsulta para obtener la duración de cada conversación (diferencia entre la primera y última fecha de cada conversación)
+
+WITH Duraciones AS (
+    SELECT 
+        id_match,
+        DATEDIFF(day, MIN(fecha_envio), MAX(fecha_envio)) AS duracion_dias
+    FROM 
+        Mensajes
+    GROUP BY 
+        id_match
+)
+
+-- Calcular el promedio de duración de las conversaciones antes de una cita
+SELECT 
+    AVG(duracion_dias) AS duracion_promedio
+FROM 
+    Duraciones;
+
+
+
+select * from Mensajes where id_match = 11;
+
+
+select * from Matches;
